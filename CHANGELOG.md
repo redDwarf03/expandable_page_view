@@ -1,3 +1,7 @@
+## 1.0.18
+
+* Add header and footer widgets in param
+
 ## 1.0.17
 
 * Fix example videos not being displayed in pub.dev

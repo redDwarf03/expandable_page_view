@@ -128,8 +128,18 @@ class ExpandablePageView extends StatefulWidget {
   /// This property defaults to true and must not be null.
   final bool padEnds;
 
+  /// Header before the pageview
+  /// This widget is optional
+  final Widget? header;
+
+  /// Header before the pageview
+  /// This widget is optional
+  final Widget? footer;
+
   ExpandablePageView({
     required List<Widget> children,
+    this.header,
+    this.footer,
     this.controller,
     this.onPageChanged,
     this.reverse = false,
@@ -147,16 +157,17 @@ class ExpandablePageView extends StatefulWidget {
     this.scrollBehavior,
     this.scrollDirection = Axis.horizontal,
     this.padEnds = true,
-    Key? key,
+    super.key,
   })  : assert(estimatedPageSize >= 0.0),
         children = children,
         itemBuilder = null,
-        itemCount = null,
-        super(key: key);
+        itemCount = null;
 
   ExpandablePageView.builder({
     required int itemCount,
     required WidgetBuilder itemBuilder,
+    this.header,
+    this.footer,
     this.controller,
     this.onPageChanged,
     this.reverse = false,
@@ -174,15 +185,14 @@ class ExpandablePageView extends StatefulWidget {
     this.scrollBehavior,
     this.scrollDirection = Axis.horizontal,
     this.padEnds = true,
-    Key? key,
+    super.key,
   })  : assert(estimatedPageSize >= 0.0),
         children = null,
         itemCount = itemCount,
-        itemBuilder = itemBuilder,
-        super(key: key);
+        itemBuilder = itemBuilder;
 
   @override
-  _ExpandablePageViewState createState() => _ExpandablePageViewState();
+  State<ExpandablePageView> createState() => _ExpandablePageViewState();
 }
 
 class _ExpandablePageViewState extends State<ExpandablePageView> {
@@ -237,16 +247,22 @@ class _ExpandablePageViewState extends State<ExpandablePageView> {
 
   @override
   Widget build(BuildContext context) {
-    return TweenAnimationBuilder<double>(
-      curve: widget.animationCurve,
-      duration: _getDuration(),
-      tween: Tween<double>(begin: _previousSize, end: _currentSize),
-      builder: (context, value, child) => SizedBox(
-        height: _isHorizontalScroll ? value : null,
-        width: !_isHorizontalScroll ? value : null,
-        child: child,
-      ),
-      child: _buildPageView(),
+    return Column(
+      children: [
+        if (widget.header != null) widget.header!,
+        TweenAnimationBuilder<double>(
+          curve: widget.animationCurve,
+          duration: _getDuration(),
+          tween: Tween<double>(begin: _previousSize, end: _currentSize),
+          builder: (context, value, child) => SizedBox(
+            height: _isHorizontalScroll ? value : null,
+            width: !_isHorizontalScroll ? value : null,
+            child: child,
+          ),
+          child: _buildPageView(),
+        ),
+        if (widget.footer != null) widget.footer!,
+      ],
     );
   }
 
